@@ -16,6 +16,7 @@ source:
     - fix-python-linking.patch
     - fix-missing-tfile-include.patch
     - fix-onnxruntime.patch
+    - drop-so-suffix.patch
 
 build:
   number: 1
