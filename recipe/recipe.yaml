@@ -49,7 +49,6 @@ requirements:
   run:
     - python
     - pyyaml
-    - onnxruntime
 
 tests:
   - package_contents:
