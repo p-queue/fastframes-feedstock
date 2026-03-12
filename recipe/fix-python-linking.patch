@@ -1,26 +1,15 @@
-From 4dd5361dddc5757bcc42c1cd5ec0c696e169140d Mon Sep 17 00:00:00 2001
-From: Giordon Stark <kratsg@gmail.com>
-Date: Tue, 10 Mar 2026 06:00:39 -0700
-Subject: [PATCH 3/6] fix python linking
-
----
- CMakeLists.txt | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
-
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 95c3494..f00bf67 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -78,7 +78,7 @@ if( EXISTS "${Boost_INCLUDE_DIR}/root" )
+--- CMakeLists.txt.orig	2026-03-11 11:52:40
++++ CMakeLists.txt	2026-03-11 11:54:00
+@@ -86,7 +86,7 @@
+     message(STATUS "Python3_ROOT_DIR inferred: ${Python3_ROOT_DIR}")
  endif()
- # Add ROOT system directory and require ROOT.
- find_package( ROOT 6.28.00 REQUIRED COMPONENTS Core Hist RIO Tree ROOTDataFrame ROOTVecOps)
+ 
 -find_package( Python3 COMPONENTS Development REQUIRED )
 +find_package( Python3 COMPONENTS Development.Module REQUIRED )
  find_package( LCG QUIET )
  find_package( onnxruntime QUIET )
  
-@@ -153,21 +153,24 @@ set_property( TARGET FastFrames
+@@ -161,21 +161,24 @@
     PROPERTY PUBLIC_HEADER ${LIB_HEADERS} )
  
  # Build the Python module for C++ logger
@@ -53,6 +42,3 @@ index 95c3494..f00bf67 100644
  
  set(SETUP ${CMAKE_CURRENT_BINARY_DIR}/setup.sh)
  file(WRITE ${SETUP} "#!/bin/bash\n")
--- 
-2.45.2
-

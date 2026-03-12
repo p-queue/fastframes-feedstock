@@ -1,27 +1,27 @@
-From 2255ea52c1bb672f57259cba028a91cb3ef799e1 Mon Sep 17 00:00:00 2001
-From: Giordon Stark <kratsg@gmail.com>
-Date: Tue, 10 Mar 2026 06:02:44 -0700
-Subject: [PATCH 5/6] fix onnxruntime
+From 98572fc24369058d39012a4aeefa6ec44c567357 Mon Sep 17 00:00:00 2001
+From: Ryan Quinn <quinn.ryanx@gmail.com>
+Date: Wed, 11 Mar 2026 12:07:42 -0700
+Subject: [PATCH] fix onnxruntime
 
 ---
  CMakeLists.txt           | 86 +++++++++++++---------------------------
  FastFrames/ONNXWrapper.h |  2 +-
- 2 files changed, 28 insertions(+), 60 deletions(-)
+ 2 files changed, 29 insertions(+), 59 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index f00bf67..162463f 100644
+index 9c270d5..b5526fd 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -80,7 +80,7 @@ endif()
- find_package( ROOT 6.28.00 REQUIRED COMPONENTS Core Hist RIO Tree ROOTDataFrame ROOTVecOps)
- find_package( Python3 COMPONENTS Development.Module REQUIRED )
+@@ -88,7 +88,7 @@ endif()
+ 
+ find_package( Python3 COMPONENTS Development REQUIRED )
  find_package( LCG QUIET )
 -find_package( onnxruntime QUIET )
 +find_package( onnxruntime CONFIG QUIET )
  
- include_directories(${CMAKE_SOURCE_DIR})
+ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
  # ------------------------------------------------
-@@ -90,68 +90,32 @@ include_directories(${CMAKE_SOURCE_DIR})
+@@ -98,68 +98,34 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
  file(GLOB SOURCES "Root/*.cc" )
  file(GLOB LIB_HEADERS "FastFrames/*.h" )
  
@@ -42,10 +42,11 @@ index f00bf67..162463f 100644
 +)
 +
 +set_property(TARGET FastFrames PROPERTY PUBLIC_HEADER ${LIB_HEADERS})
++
  # ------------------------------------------------
  # ONNXWrapper conditional compilation
  # ------------------------------------------------
--
+ 
 -# Define a variable for the ONNX module path. Allow it to be set from the command line.
 -set(ONNXRUNTIME_ROOTDIR "" CACHE PATH "Path to the ONNX Runtime installation directory")
 -
@@ -102,16 +103,16 @@ index f00bf67..162463f 100644
 -# Build the shared library.
 -add_library( FastFrames SHARED ${LIB_HEADERS} ${SOURCES} )
 -set_target_properties(FastFrames PROPERTIES SUFFIX ".so")
--target_include_directories( FastFrames PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}> ${ONNXRUNTIME_INCLUDE_DIRS} )
+-target_include_directories( FastFrames PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}> $<INSTALL_INTERFACE:include> ${ONNXRUNTIME_INCLUDE_DIRS} )
 -target_include_directories(FastFrames SYSTEM PUBLIC ${ONNXRUNTIME_INCLUDE_DIRS} )
 -target_link_libraries( FastFrames PUBLIC ROOT::Core ROOT::Hist ROOT::RIO ROOT::Tree ROOT::ROOTDataFrame ROOT::ROOTVecOps ${ONNXRUNTIME_LIBRARIES} )
 -set_property( TARGET FastFrames
 -   PROPERTY PUBLIC_HEADER ${LIB_HEADERS} )
 -
  # Build the Python module for C++ logger
- add_library( cppLogger MODULE python_wrapper/utils/Logger.cxx )
- set_target_properties(cppLogger PROPERTIES SUFFIX ".so" PREFIX "")
-@@ -175,7 +139,11 @@ endif()
+ add_library( cppLogger SHARED python_wrapper/utils/Logger.cxx )
+ set_target_properties(cppLogger PROPERTIES SUFFIX ".so")
+@@ -180,7 +146,11 @@ set_target_properties( ConfigReaderCpp PROPERTIES
  set(SETUP ${CMAKE_CURRENT_BINARY_DIR}/setup.sh)
  file(WRITE ${SETUP} "#!/bin/bash\n")
  file(APPEND ${SETUP} "# this is an auto-generated setup script\n" )
@@ -122,8 +123,8 @@ index f00bf67..162463f 100644
 +  file(APPEND ${SETUP} "export LD_LIBRARY_PATH=\${LD_LIBRARY_PATH}:${CMAKE_INSTALL_PREFIX}/lib\n")
 +endif()
  file(APPEND ${SETUP} "export PATH=\${PATH}:${CMAKE_CURRENT_SOURCE_DIR}/python\n")
+ file(APPEND ${SETUP} "export FASTFRAMES_DIR=${CMAKE_CURRENT_SOURCE_DIR}\n")
  
- # Install the libraries.
 diff --git a/FastFrames/ONNXWrapper.h b/FastFrames/ONNXWrapper.h
 index c88ab47..66ad648 100644
 --- a/FastFrames/ONNXWrapper.h
@@ -138,5 +139,5 @@ index c88ab47..66ad648 100644
  
  /**
 -- 
-2.45.2
+2.53.0
 
