@@ -1,7 +1,7 @@
 schema_version: 1
 
 context:
-  version: "6.4.0"
+  version: "7.0.0"
 
 package:
   name: fastframes
@@ -9,7 +9,7 @@ package:
 
 source:
   url: https://gitlab.cern.ch/atlas-amglab/fastframes/-/archive/v${{ version }}/fastframes-v${{ version }}.tar.gz
-  sha256: 901b4908594a108e5790ebb45cbf695a044c35093d82a757d081adda04e23f2c
+  sha256: 8a7ae28296cfc18c5fdafd863c54b4a8432bdcdd5fd028661763b390b2aa6e2c
   patches:
     - fix-root-6-38-compat.patch
     - install-python-files.patch
